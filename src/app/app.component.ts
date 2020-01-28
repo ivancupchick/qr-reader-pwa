@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.sass']
 })
-export class AppComponent {
-  title = 'ang-qr-pwa';
+export class AppComponent implements OnInit {
+
+  constructor(private renderer: Renderer2) { }
+
+  ngOnInit() {
+  }
 }
