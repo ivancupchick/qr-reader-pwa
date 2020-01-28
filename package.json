@@ -21,6 +21,7 @@
     "@angular/pwa": "~0.803.23",
     "@angular/router": "~8.2.14",
     "@angular/service-worker": "~8.2.14",
+    "angular-cli-ghpages": "^0.6.2",
     "angular2-qrscanner": "^1.0.7",
     "core-js": "^2.5.4",
     "ngx-perfect-scrollbar": "^8.0.0",
