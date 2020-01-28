@@ -7,8 +7,8 @@ import { QrScannerComponent } from 'angular2-qrscanner';
   styleUrls: ['./qr-reader.component.sass']
 })
 export class QrReaderComponent implements OnInit {
-  @ViewChild(QrScannerComponent) qrScannerComponent: QrScannerComponent ;
-  @ViewChild('result') resultElement: ElementRef;
+  @ViewChild(QrScannerComponent, { static: true }) qrScannerComponent: QrScannerComponent ;
+  @ViewChild('result', { static: true }) resultElement: ElementRef;
 
   constructor(private renderer: Renderer2) { }
 
