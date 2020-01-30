@@ -14,7 +14,6 @@ export class QrReaderComponent implements OnInit {
 
   ngOnInit() {
     this.qrScannerComponent.getMediaDevices().then(devices => {
-      console.log(devices);
       const videoDevices: MediaDeviceInfo[] = [];
       for (const device of devices) {
           if (device.kind.toString() === 'videoinput') {
@@ -24,7 +23,7 @@ export class QrReaderComponent implements OnInit {
       if (videoDevices.length > 0) {
         let choosenDev;
         for (const dev of videoDevices) {
-          if (dev.label.includes('front')) {
+          if (dev.label.toLowerCase().includes('back') || dev.label.toLowerCase().includes('зад')) {
             choosenDev = dev;
             break;
           }
@@ -38,9 +37,13 @@ export class QrReaderComponent implements OnInit {
     });
 
     this.qrScannerComponent.capturedQr.subscribe(result => {
-      const resultItem: HTMLElement = this.renderer.createElement('span');
-      resultItem.innerHTML = `${result}`;
-      this.renderer.appendChild(this.resultElement.nativeElement, resultItem);
+      this.appendMessageToPage(result); // routerLink to show account info or show error
     });
+  }
+
+  appendMessageToPage(text: string) {
+    const resultItem: HTMLElement = this.renderer.createElement('span');
+    resultItem.innerHTML = `${text}`;
+    this.renderer.appendChild(this.resultElement.nativeElement, resultItem);
   }
 }
