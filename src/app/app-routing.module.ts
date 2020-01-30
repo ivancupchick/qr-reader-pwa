@@ -5,12 +5,12 @@ import { HomeComponent } from './components/pages/home/home.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
-  { path: 'home', component: HomeComponent},
+  { path: 'home', component: HomeComponent },
   { path: 'qr-code', component: QrReaderComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
