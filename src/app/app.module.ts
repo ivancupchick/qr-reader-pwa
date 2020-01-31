@@ -16,6 +16,9 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { ModalService } from './modal/modal.service';
+import { CreateNewLetterComponent } from './components/pages/create-new-letter/create-new-letter.component';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireModule } from '@angular/fire';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -28,7 +31,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    QrReaderComponent
+    QrReaderComponent,
+    CreateNewLetterComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +42,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 
     PerfectScrollbarModule,
 
-    NgQrScannerModule
+    NgQrScannerModule,
+
+    AngularFireModule.initializeApp(environment.firebase),
+    // AngularFireAuthModule,
+    AngularFireDatabaseModule,
   ],
   providers: [
     { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
