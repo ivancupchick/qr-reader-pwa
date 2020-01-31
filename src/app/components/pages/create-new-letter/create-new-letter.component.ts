@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { LetterFormComponent } from '../../shared/letter-form/letter-form.component';
 
 @Component({
   selector: 'app-create-new-letter',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./create-new-letter.component.sass']
 })
 export class CreateNewLetterComponent implements OnInit {
+
+  @ViewChild(LetterFormComponent, { static: false }) form: LetterFormComponent;
 
   constructor() { }
 

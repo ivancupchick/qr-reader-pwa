@@ -7,13 +7,22 @@
   justify-content: space-between
   align-items: center
 
-  a
-    min-width: 100px
-    height: 35px
-    padding: 0 20px
-    background: rgb(221, 216, 197)
-    color: rgb(90, 83, 73)
-    text-decoration: none
+  div
     display: flex
-    align-items: center
     justify-content: center
+    align-items: center
+    flex-direction: row
+
+    a
+      min-width: 100px
+      height: 35px
+      padding: 0 20px
+      background: rgb(221, 216, 197)
+      color: rgb(90, 83, 73)
+      text-decoration: none
+      display: flex
+      align-items: center
+      justify-content: center
+
+    a + a
+      margin-left: 20px

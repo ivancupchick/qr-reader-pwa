@@ -19,6 +19,7 @@ import { ModalService } from './modal/modal.service';
 import { CreateNewLetterComponent } from './components/pages/create-new-letter/create-new-letter.component';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireModule } from '@angular/fire';
+import { LetterFormComponent } from './components/shared/letter-form/letter-form.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -32,7 +33,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FooterComponent,
     HomeComponent,
     QrReaderComponent,
-    CreateNewLetterComponent
+    CreateNewLetterComponent,
+    LetterFormComponent
   ],
   imports: [
     BrowserModule,

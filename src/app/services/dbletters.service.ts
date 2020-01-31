@@ -3,7 +3,7 @@ import { AngularFireDatabase, AngularFireList, AngularFireAction, DatabaseSnapsh
 import { Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 
-enum LetterStatus {
+export enum LetterStatus {
   onStartPostOffice = 0,
   inProgress = 1,
   onPromejutochniyPostOffice = 2,
@@ -43,7 +43,7 @@ enum LetterStatus {
 
 */
 
-enum MejdunarondType { // think about it!
+export enum MejdunarondType { // think about it!
   simplePostLetter = 0,
   /*
   − простые почтовые отправления – почтовые отправления,
@@ -70,7 +70,7 @@ enum MejdunarondType { // think about it!
   */
 }
 
-enum TypeOfLetter {
+export enum TypeOfLetter {
   pismo = 0,
   /*
     Размер: для отправлений малого формата: минимальный – 90x140 мм. максимальный 165х245 мм,
@@ -82,7 +82,7 @@ enum TypeOfLetter {
   */
 }
 
-enum LetterType {
+export enum LetterType {
   simple = 0,
   /*
   Характер вложения: разного рода письменные сообщения.
@@ -127,14 +127,14 @@ enum LetterType {
   */
 }
 
-enum TypeOfUvedomlenie { // think who is who i kuda eto vsunut?
+export enum TypeOfUvedomlenie { // think who is who i kuda eto vsunut?
   /*
   Простое – бланк уведомления пересылается и вручается отправителю как простое письмо.
   Заказное – бланк уведомления вручается отправителю под расписку.
   Электронное – информация о вручении отправления поступает отправителю на адрес электронной почты.
   */
 }
-enum SpecialMarkForZakazLetter {
+export enum SpecialMarkForZakazLetter {
   withUvedimoleniem = 0,
   /*
   отправитель будет извещен, когда и кому (адресату или его доверенному лицу) вручено ваше отправление.
@@ -146,13 +146,13 @@ enum SpecialMarkForZakazLetter {
   */
 }
 
-enum TypeOfTown { // add new
+export enum TypeOfTown { // add new
   city = 0,
   derevnya = 1,
   posiolok = 2
 }
 
-enum SpecialMarkForValuenceLetter {
+export enum SpecialMarkForValuenceLetter {
   /*
   – "С уведомлением о получении" – отправитель будет извещен, когда и кому (адресату или его доверенному лицу) вручено ваше отправление.
   – "Вручить лично" – пересылается с заказным уведомлением о вручении с отметкой на отправлении
@@ -166,25 +166,25 @@ enum SpecialMarkForValuenceLetter {
   */
 }
 
-interface ManName {
+export interface ManName {
   name: string;
   surname: string;
   otchestvo: string;
 }
-interface Address {
+export interface Address {
   streetName: string;
   numberOfHouse: string;
   numberOfKorpus?: string;
   numberOfFlat: number; // may string?
 }
-interface NasPunktName {
+export interface NasPunktName {
   oblast: string; // область
   region?: string; // район
   townName: string; // город (название населеного пункта)
   typeOfTown: TypeOfTown;
 }
 
-interface Letter {
+export interface Letter { // please change this names and change these in form
   hash: string; // progs
   status: LetterStatus;
   isMejdunarond: boolean;
@@ -196,7 +196,7 @@ interface Letter {
     nasPunktName: NasPunktName;
   };
 
-  poluchatelAddress: {
+  otpravitelAddress: {
     otKogo: ManName,
     adress: Address & NasPunktName // may convert to Address and NasPunktName;
   };

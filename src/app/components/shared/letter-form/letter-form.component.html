@@ -1,0 +1,32 @@
+<div class="main-form">
+  <div class="row">
+    <label for="isMejdunarond">Это международное отправление?</label>
+    <input type="checkbox" id="isMejdunarond" [(ngModel)]="letter.isMejdunarond">
+  </div>
+  <!-- receiverAddress -->
+  <div class="row">
+    <p>Адрес получателя</p>
+    <label for="komu">ФИО Получателя</label>
+    <input type="text" name="komu" id="komu">
+    <label for="kuda">Адрес получателя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
+    <input type="text" name="kuda" id="kuda">
+    <label for="index">Индекс</label>
+    <input type="text" name="index" id="index">
+    <label for="nasPunktName">Название населенного пункта (обасть, район, город)</label>
+    <input type="text" name="nasPunktName" id="nasPunktName">
+  </div>
+  <div class="row">
+    <p>Адрес отправителя</p>
+    <label for="otKogo">От кого</label>
+    <input type="text" name="otKogo" id="otKogo">
+
+    <label for="adressOtKogo">Адрес отправителя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
+    <input type="text" name="adressOtKogo" id="adressOtKogo">
+    <label for="otKogoNasPunktName">Название населенного пункта (обасть, район, город)</label>
+    <input type="text" name="otKogoNasPunktName" id="otKogoNasPunktName">
+  </div>
+
+  <div class="row">
+    <!-- <select name="typeOfLetter" id="typeOfLetter" [(ng)]></select> -->
+  </div>
+</div>

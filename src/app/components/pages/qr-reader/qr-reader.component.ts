@@ -32,7 +32,7 @@ export class QrReaderComponent implements OnInit {
         console.log(devices);
         const videoDevices: MediaDeviceInfo[] = [];
         for (const device of devices) {
-            if (device.kind.toString() === 'videoinput') {
+            if (device.kind.toString() === 'videoinput' || device.kind.toString() === 'video' ) {
               videoDevices.push(device);
             }
         }
@@ -72,10 +72,48 @@ export class QrReaderComponent implements OnInit {
   }
 
   getDevices(): Promise<MediaDeviceInfo[]> {
+
+
+    const countDeices = (r: MediaStream): MediaDeviceInfo[] => {
+      const devices: MediaDeviceInfo[] = [];
+
+      r.getTracks().forEach(track => {
+        const settings = track.getSettings();
+
+        devices.push({
+          label: track.label,
+          deviceId: settings.deviceId,
+          groupId: settings.groupId,
+          kind: track.kind as MediaDeviceKind,
+          toJSON: () => ''
+        });
+
+        this.appendMessageToPage(track.kind);
+      });
+
+      return devices;
+    };
+
     let getUserMedia: (
       constraints: MediaStreamConstraints,
       successCallback: NavigatorUserMediaSuccessCallback,
       errorCallback: NavigatorUserMediaErrorCallback) => void;
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      return navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(res => {
+          const devices = countDeices(res);
+          if (devices.length === 0) {
+            return this.qrScannerComponent.getMediaDevices();
+          }
+
+          return devices;
+        });
+    }
+
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      return this.qrScannerComponent.getMediaDevices();
+    }
 
     if (navigator.getUserMedia) {
       // this.isWebkit = true;
@@ -92,21 +130,8 @@ export class QrReaderComponent implements OnInit {
 
     if (getUserMedia) {
       return new Promise((resolve) => {
-        const devices: MediaDeviceInfo[] = [];
         getUserMedia({ video: true, audio: false}, (res) => {
-          res.getTracks().forEach(track => {
-            const settings = track.getSettings();
-
-            devices.push({
-              label: track.label,
-              deviceId: settings.deviceId,
-              groupId: settings.groupId,
-              kind: track.kind as MediaDeviceKind,
-              toJSON: () => ''
-            });
-
-            this.appendMessageToPage(track.kind);
-          });
+          const devices = countDeices(res);
 
           if (devices.length === 0) {
             return this.qrScannerComponent.getMediaDevices();
@@ -174,6 +199,8 @@ export class QrReaderComponent implements OnInit {
     } else if (this.factCameara) {
       this.qrScannerComponent.chooseCamera.next(this.factCameara);
     } else {
+
+
       this.updateCameras()
         .then(() => {
           if ((cam.target as any).value === 'front' && this.frontCamera) {
