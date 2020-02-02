@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
-import { NgQrScannerModule } from 'angular2-qrscanner';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './components/pages/home/home.component';
@@ -43,8 +42,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FormsModule,
 
     PerfectScrollbarModule,
-
-    NgQrScannerModule,
 
     AngularFireModule.initializeApp(environment.firebase),
     // AngularFireAuthModule,

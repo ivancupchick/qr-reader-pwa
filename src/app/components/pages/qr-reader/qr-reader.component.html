@@ -2,14 +2,13 @@
 <div class="wrapper">
   <perfect-scrollbar>
     <div #videoWrapper class="videoWrapper">
-      <!-- <button (click)="showCamera()" *ngIf="!isShowCamera" type="button">Start Scanning</button> -->
       <label for="choiseCamera">Выберите камеру</label>
-      <select (change)="chooseCamera($event)" name="choiseCamera" id="choiseCamera">
-        <option value="back">Задняя камера</option>
-        <option value="front">Передняя камера</option>
+      <select #selecting [(ngModel)]="selectValue" (change)="getStream()" name="choiseCamera" id="choiseCamera">
+      <option *ngFor="let device of devices" [value]="device.value"> {{ device.label }}</option>
       </select>
+      <!-- <select #selecting (change)="getStream()"></select> -->
 
-      <div [ngStyle]="{'visibility': isShowCamera ? 'visible' : 'hidden'}" [hidden]="">
+      <!-- <div>
         <qr-scanner
           [debug]="false"
           [canvasWidth]="200"
@@ -17,7 +16,9 @@
           [stopAfterScan]="false"
           [updateTime]="100"
         ></qr-scanner>
-      </div>
+      </div> -->
+
+      <video #videoWrapper2 autoplay muted playsinline></video>
     </div>
 
     <div #result class="resultQRCodes"></div>

@@ -13,208 +13,79 @@ export class QrReaderComponent implements OnInit {
   frontCamera;
   factCameara;
 
+  selectValue;
+
+  devices = [
+    { value: 'none', label: 'Выберите каамеру' }
+  ];
+
+  /*
+  for test on mobile:
+
+  start serve with command
+  ng s --host 0.0.0.0 --disable-host-check
+
+  and another command window:
+  ssh -R 80:0.0.0.0:4200 ssh.localhost.run
+  */
+
   @ViewChild(QrScannerComponent, { static: true }) qrScannerComponent: QrScannerComponent ;
   @ViewChild('result', { static: true }) resultElement: ElementRef;
+  @ViewChild('videoWrapper2', { static: true }) videoWrapper: ElementRef;
+  @ViewChild('selecting', { static: true }) selecting: ElementRef;
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private renderer: Renderer2, private elementRef: ElementRef) { }
 
   ngOnInit() {
-    this.updateCameras();
-
-    this.qrScannerComponent.capturedQr.subscribe(result => {
-      this.appendMessageToPage(result); // routerLink to show account info or show error
-    });
+    this.getStream().then(this.getDevices).then(this.gotDevices);
   }
 
-  updateCameras(withoutReChoose = false, usePromise = false): Promise<void> {
-    return (!usePromise ? this.getDevices() : this.qrScannerComponent.getMediaDevices())
-      .then(devices => {
-        console.log(devices);
-        const videoDevices: MediaDeviceInfo[] = [];
-        for (const device of devices) {
-            if (device.kind.toString() === 'videoinput' || device.kind.toString() === 'video' ) {
-              videoDevices.push(device);
-            }
-        }
-        if (videoDevices.length > 0) {
-          let choosenDev;
-          for (const dev of videoDevices) {
-            if (dev.label.toLowerCase().includes('back') || dev.label.toLowerCase().includes('зад')) {
-              this.backCamera = dev;
-              this.appendMessageToPage('задняя');
-              this.appendMessageToPage(dev.label);
-              // choosenDev = dev;
-              // break;
-            }
-            if (dev.label.toLowerCase().includes('front') || dev.label.toLowerCase().includes('перед')) {
-              choosenDev = dev;
-              this.frontCamera = dev;
-              this.appendMessageToPage('передняя');
-              this.appendMessageToPage(dev.label);
-              break;
-            }
-          }
-          if (choosenDev) {
-            if (!withoutReChoose) {
-              this.qrScannerComponent.chooseCamera.next(choosenDev);
-            }
-
-            this.factCameara = choosenDev;
-          } else {
-            if (!withoutReChoose) {
-              this.qrScannerComponent.chooseCamera.next(videoDevices[0]);
-            }
-
-            this.factCameara = videoDevices[0];
-          }
-        }
-      });
+  getDevices() {
+    return navigator.mediaDevices.enumerateDevices();
   }
 
-  getDevices(): Promise<MediaDeviceInfo[]> {
-
-
-    const countDeices = (r: MediaStream): MediaDeviceInfo[] => {
-      const devices: MediaDeviceInfo[] = [];
-
-      r.getTracks().forEach(track => {
-        const settings = track.getSettings();
-
-        devices.push({
-          label: track.label,
-          deviceId: settings.deviceId,
-          groupId: settings.groupId,
-          kind: track.kind as MediaDeviceKind,
-          toJSON: () => ''
+  gotDevices = (deviceInfos) => {
+    (window as any).deviceInfos = deviceInfos; // may not need, realy, i have tested it
+    for (const deviceInfo of deviceInfos) {
+      if (deviceInfo.kind === 'videoinput') {
+        this.devices.push({
+          value: deviceInfo.deviceId,
+          label: deviceInfo.label
         });
+      }
+    }
+  }
 
-        this.appendMessageToPage(track.kind);
+  getStream = () => {
+    if ((window as any).stream) {
+      (window as any).stream.getTracks().forEach(track => {
+        track.stop();
       });
+    }
 
-      return devices;
+    const videoSource = this.selecting.nativeElement.value;
+
+    if (videoSource === 'none') {
+      // hide videoWrapper
+      return;
+    }
+
+    const constraints = {
+      audio: false,
+      video: {deviceId: videoSource ? {exact: videoSource} : undefined}
     };
-
-    let getUserMedia: (
-      constraints: MediaStreamConstraints,
-      successCallback: NavigatorUserMediaSuccessCallback,
-      errorCallback: NavigatorUserMediaErrorCallback) => void;
-
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      return navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        .then(res => {
-          const devices = countDeices(res);
-          if (devices.length === 0) {
-            return this.qrScannerComponent.getMediaDevices();
-          }
-
-          return devices;
-        });
-    }
-
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      return this.qrScannerComponent.getMediaDevices();
-    }
-
-    if (navigator.getUserMedia) {
-      // this.isWebkit = true;
-      getUserMedia =  navigator.getUserMedia;
-    } else if ((navigator as any).webkitGetUserMedia) {
-      // this.isWebkit = true;
-      getUserMedia =  (navigator as any).webkitGetUserMedia;
-    } else if ((navigator as any).mozGetUserMedia) {
-      // this.isMoz = true;
-      getUserMedia = (navigator as any).mozGetUserMedia;
-    } else {
-      getUserMedia = null;
-    }
-
-    if (getUserMedia) {
-      return new Promise((resolve) => {
-        getUserMedia({ video: true, audio: false}, (res) => {
-          const devices = countDeices(res);
-
-          if (devices.length === 0) {
-            return this.qrScannerComponent.getMediaDevices();
-          }
-
-          resolve(devices);
-        }, (err) => {
-          this.appendMessageToPage(err.message);
-        });
-      });
-    } else {
-      this.appendMessageToPage('navigator.getUserMedia = false');
-
-      return this.qrScannerComponent.getMediaDevices();
-    }
+    return navigator.mediaDevices.getUserMedia(constraints).
+      then(this.gotStream).catch(this.handleError);
   }
 
-  appendMessageToPage(text: string) {
-    const resultItem: HTMLElement = this.renderer.createElement('span');
-    resultItem.innerHTML = `${text}`;
-    this.renderer.appendChild(this.resultElement.nativeElement, resultItem);
+  gotStream = (stream: MediaStream) => {
+    (window as any).stream = stream; // may not need
+    this.selecting.nativeElement.selectedIndex = [...this.selecting.nativeElement.options].
+      findIndex(option => option.text === stream.getVideoTracks()[0].label); // may not need
+    this.videoWrapper.nativeElement.srcObject = stream;
   }
 
-  // showCamera() {
-  //   this.isShowCamera = true;
-
-  //   if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-  //     navigator.mediaDevices.enumerateDevices()
-  //       .then(devices => {
-  //         const videoDevices: MediaDeviceInfo[] = [];
-  //         for (const device of devices) {
-  //             if (device.kind.toString() === 'videoinput') {
-  //                 videoDevices.push(device);
-  //             }
-  //         }
-  //         if (videoDevices.length > 0) {
-  //           for (const dev of videoDevices) {
-  //             if (dev.label.toLowerCase().includes('back') || dev.label.toLowerCase().includes('зад')) {
-  //               this.backCamera = dev;
-  //               break;
-  //             }
-  //           }
-  //         }
-  //       })
-  //       .then(() => {
-  //         if (this.backCamera) {
-  //           this.appendMessageToPage('задняя');
-  //           this.appendMessageToPage(this.backCamera.label);
-  //           this.qrScannerComponent.chooseCamera.next(this.backCamera);
-  //         } else {
-  //           this.appendMessageToPage('задняя не найдена');
-  //         }
-  //       });
-  //   } else {
-  //     this.appendMessageToPage('navigator.mediaDevices.enumerateDevices = false');
-  //   }
-  // }
-
-  chooseCamera(cam: Event) {
-    this.isShowCamera = true;
-    if ((cam.target as any).value === 'front' && this.frontCamera) {
-      this.qrScannerComponent.chooseCamera.next(this.frontCamera);
-    } else if ((cam.target as any).value === 'back' && this.backCamera) {
-      this.qrScannerComponent.chooseCamera.next(this.backCamera);
-    } else if (this.factCameara) {
-      this.qrScannerComponent.chooseCamera.next(this.factCameara);
-    } else {
-
-
-      this.updateCameras()
-        .then(() => {
-          if ((cam.target as any).value === 'front' && this.frontCamera) {
-            this.qrScannerComponent.chooseCamera.next(this.frontCamera);
-          } else if ((cam.target as any).value === 'back' && this.backCamera) {
-            this.qrScannerComponent.chooseCamera.next(this.backCamera);
-          } else if (this.factCameara) {
-            this.qrScannerComponent.chooseCamera.next(this.factCameara);
-          }
-        });
-      this.appendMessageToPage('Какой-то из камер нету');
-    }
-
-    this.updateCameras(true, true);
-    console.log(cam);
+  handleError(error) {
+    console.error('Error: ', error);
   }
 }
