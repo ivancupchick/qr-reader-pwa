@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef, Renderer2, EventEmitter, AfterViewInit } from '@angular/core';
-import { QrScannerComponent } from 'angular2-qrscanner';
 import { Subject, Subscription } from 'rxjs';
 import { QRCode } from 'src/lib/qr-decoder/qrcode';
 
@@ -28,7 +27,7 @@ export class QrReaderComponent implements OnInit, AfterViewInit {
   */
 
 
-  @ViewChild(QrScannerComponent, { static: true }) qrScannerComponent: QrScannerComponent ;
+  // @ViewChild(QrScannerComponent, { static: true }) qrScannerComponent: QrScannerComponent ;
   @ViewChild('result', { static: true }) resultElement: ElementRef;
   @ViewChild('videoWrapper', { static: true }) videoWrapper: ElementRef;
   @ViewChild('selecting', { static: true }) selecting: ElementRef;

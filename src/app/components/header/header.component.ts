@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as jsPDf from 'jspdf';
 
 @Component({
   selector: 'app-header',
@@ -12,4 +13,10 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
+  downloadQR() {
+    const doc = new jsPDf();
+
+    doc.text('rrr', 15, 15);
+    doc.save('first.pdf');
+  }
 }
