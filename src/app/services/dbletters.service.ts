@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 
 export enum LetterStatus {
-  onStartPostOffice = 0,
-  inProgress = 1,
-  onPromejutochniyPostOffice = 2,
-  onEndPostOffice = 3
+  withoutStatus = 'withoutStatus',
+  onStartPostOffice = 'onStartPostOffice',
+  inProgress = 'inProgress',
+  onPromejutochniyPostOffice = 'onPromejutochniyPostOffice',
+  onEndPostOffice = 'onEndPostOffice'
 }
 
 /*
@@ -44,13 +45,13 @@ export enum LetterStatus {
 */
 
 export enum MejdunarondType { // think about it!
-  simplePostLetter = 0,
+  simplePostLetter = 'simplePostLetter',
   /*
   − простые почтовые отправления – почтовые отправления,
   которые принимаются без выдачи квитанции и вручаются
   (доставляются) адресатам без расписки.
   */
-  registrPostLetter = 1,
+  registrPostLetter = 'registrPostLetter',
   /*
   − регистрируемые почтовые отправления – почтовые отправления, при
   приеме которых отправителю выдается квитанция, отправления
@@ -62,7 +63,7 @@ export enum MejdunarondType { // think about it!
 
   XX123456789YY
   */
-  simpleOtslejivaemie = 2
+  simpleOtslejivaemie = 'simpleOtslejivaemie'
   /*
   − простые отслеживаемые отправления – почтовые отправления, которым
   при приеме присваивается номер, сканируемый в систему слежения при
@@ -71,7 +72,7 @@ export enum MejdunarondType { // think about it!
 }
 
 export enum TypeOfLetter {
-  pismo = 0,
+  pismo = 'pismo',
   /*
     Размер: для отправлений малого формата: минимальный – 90x140 мм. максимальный 165х245 мм,
      максимальная толщина 5 мм.: для отправлений большого формата: минимальный – 90x140 мм.
@@ -83,14 +84,14 @@ export enum TypeOfLetter {
 }
 
 export enum LetterType {
-  simple = 0,
+  simple = 'simple',
   /*
   Характер вложения: разного рода письменные сообщения.
   Порядок отправления: простые письма опускаются отправителем в почтовый ящик. Письма с оттиском
   маркировальных и франкировальных машин сдаются на операционные кассы объектов почтовой связи.
   Порядок вручения: простые письма вручаются путем опускания в абонентский почтовый шкаф и индивидуальный почтовый ящик.
   */
-  zakaz = 1,
+  zakaz = 'zakaz',
   /*
   Характер вложения: разного рода письменные сообщения, деловые бумаги, фотографии,
   художественные открытки, схемы и другая аналогичная бумажная продукция.
@@ -111,7 +112,7 @@ export enum LetterType {
   Заказное – бланк уведомления вручается отправителю под расписку.
   Электронное – информация о вручении отправления поступает отправителю на адрес электронной почты.
   */
- letterWithAnnouncedValue = 2
+ letterWithAnnouncedValue = 'letterWithAnnouncedValue'
   /*
   Характер вложения: ценные бумаги или документы (документы, удостоверяющие личность,
   свидетельства о регистрации актов гражданского состояния, водительские удостоверения, военные
@@ -135,11 +136,11 @@ export enum TypeOfUvedomlenie { // think who is who i kuda eto vsunut?
   */
 }
 export enum SpecialMarkForZakazLetter {
-  withUvedimoleniem = 0,
+  withUvedimoleniem = 'withUvedimoleniem',
   /*
   отправитель будет извещен, когда и кому (адресату или его доверенному лицу) вручено ваше отправление.
   */
-  vruchitLichno = 1
+  vruchitLichno = 'vruchitLichno'
   /*
   пересылается с заказным уведомлением о получении с отметкой на отправлении "Вручить лично".
   Принимается только в адрес физических лиц на дом.
@@ -147,9 +148,14 @@ export enum SpecialMarkForZakazLetter {
 }
 
 export enum TypeOfTown { // add new
-  city = 0,
-  derevnya = 1,
-  posiolok = 2
+  city = 'city',
+  derevnya = 'derevnya',
+  posiolok = 'posiolok'
+}
+
+export enum StreetType {
+  prospect = 'prospect',
+  ulica = 'ulica'
 }
 
 export enum SpecialMarkForValuenceLetter {
@@ -172,27 +178,30 @@ export interface ManName {
   otchestvo: string;
 }
 export interface Address {
-  streetName: string;
+  streetType?: StreetType; // enum
+  streetName?: string;
   numberOfHouse: string;
   numberOfKorpus?: string;
-  numberOfFlat: number; // may string?
+  numberOfFlat?: string;
 }
 export interface NasPunktName {
   oblast: string; // область
   region?: string; // район
   townName: string; // город (название населеного пункта)
   typeOfTown: TypeOfTown;
+  country: string;
 }
 
 export interface Letter { // please change this names and change these in form
+  id: number;
   hash: string; // progs
   status: LetterStatus;
-  isMejdunarond: boolean;
+  isMejdunarond: string; // bool
 
   receiverAddress: {
     komu: ManName;
     kuda: Address;
-    index: number;
+    index: string;
     nasPunktName: NasPunktName;
   };
 
@@ -201,10 +210,10 @@ export interface Letter { // please change this names and change these in form
     adress: Address & NasPunktName // may convert to Address and NasPunktName;
   };
 
-  typeOfLetter: TypeOfLetter; // вид отправления
-  letterType?: LetterType; // if typeOfLetter === TypeOfLetter.pismo
-  specialMarkForZakazLetter?: SpecialMarkForZakazLetter; // if typeOfLetter === TypeOfLetter.pismo && letterType === LetterType.zakaz
-  specialMarkForValuenceLetter: SpecialMarkForValuenceLetter;
+  // typeOfLetter: TypeOfLetter; // вид отправления
+  // letterType?: LetterType; // if typeOfLetter === TypeOfLetter.pismo
+  // specialMarkForZakazLetter?: SpecialMarkForZakazLetter; // if typeOfLetter === TypeOfLetter.pismo && letterType === LetterType.zakaz
+  // specialMarkForValuenceLetter: SpecialMarkForValuenceLetter;
   // if typeOfLetter === TypeOfLetter.pismo && letterType === LetterType.letterWithAnnouncedValue
 
   dateAndTimeOfStartWay: number;
