@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, Renderer2, EventEmitter, AfterViewInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { QRCode } from 'src/lib/qr-decoder/qrcode';
+import { DBLettersService, LetterStatus } from 'src/app/services/dbletters.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-qr-reader',
@@ -60,7 +62,12 @@ export class QrReaderComponent implements OnInit, AfterViewInit {
       return !!(canvas.getContext && canvas.getContext('2d'));
   }
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef) { }
+  constructor(
+    private renderer: Renderer2,
+    private elementRef: ElementRef,
+    private apiService: DBLettersService,
+    private storageService: StorageService
+  ) { }
 
   ngOnInit() {
     // const r = this.videoWrapper.nativeElement;
@@ -77,12 +84,6 @@ export class QrReaderComponent implements OnInit, AfterViewInit {
     // this.canvasWidth = r;
 
     this.getStream().then(this.getDevices).then(this.gotDevices);
-  }
-
-  appendMessageToResult(text: string) {
-    const textWrapper = this.renderer.createElement('span');
-    textWrapper.innerHTML = text;
-    this.renderer.appendChild(this.resultElement.nativeElement, textWrapper);
   }
 
   // ngOnDestroy() {
@@ -136,10 +137,29 @@ export class QrReaderComponent implements OnInit, AfterViewInit {
     //   this.stopScanning();
     //   this.capturedQr.next(decoded);
     // } else {
-      this.capturedQr.next(decoded);
-      this.appendMessageToResult(decoded); // stop scanning and link to letter information
-      this.captureTimeout = setTimeout(() => this.captureToCanvas(), this.updateTime);
     // }
+    decoded = decoded.substr(0, decoded.length - 4);
+    // decoded = decoded.
+    const id = +decoded;
+    if (typeof id === 'number') {
+      this.stopScanning();
+      // this.capturedQr.next(decoded);
+      alert(`Код успешно просканирован - ${id}`);
+      this.apiService.updateStatusLetter(id, this.storageService.status.getValue())
+        .subscribe(res => {
+          alert('Статус успешно сменен');
+        }, error => {
+          for (const key in error) {
+            if (error.hasOwnProperty(key)) {
+              alert(key + ' - ' + error[key]);
+            }
+          }
+        });
+    } else {
+      // this.capturedQr.next(decoded);
+      // this.appendMessageToResult(decoded); // stop scanning and link to letter information
+      this.captureTimeout = setTimeout(() => this.captureToCanvas(), this.updateTime);
+    }
   }
 
   private captureToCanvas() {
@@ -245,5 +265,11 @@ export class QrReaderComponent implements OnInit, AfterViewInit {
 
   handleError(error) {
     console.error('Error: ', error);
+  }
+
+  appendMessageToResult(text: string) {
+    const textWrapper = this.renderer.createElement('span');
+    textWrapper.innerHTML = text;
+    this.renderer.appendChild(this.resultElement.nativeElement, textWrapper);
   }
 }

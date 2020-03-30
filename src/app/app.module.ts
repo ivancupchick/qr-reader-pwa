@@ -16,9 +16,10 @@ import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { ModalService } from './modal/modal.service';
 import { CreateNewLetterComponent } from './components/pages/create-new-letter/create-new-letter.component';
-import { AngularFireDatabaseModule } from '@angular/fire/database';
-import { AngularFireModule } from '@angular/fire';
 import { LetterFormComponent } from './components/shared/letter-form/letter-form.component';
+import { DBLettersService } from './services/dbletters.service';
+import { HttpClientModule } from '@angular/common/http';
+import { StorageService } from './services/storage.service';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -40,16 +41,15 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     FormsModule,
+    HttpClientModule,
 
     PerfectScrollbarModule,
-
-    AngularFireModule.initializeApp(environment.firebase),
-    // AngularFireAuthModule,
-    AngularFireDatabaseModule,
   ],
   providers: [
     { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
-    ModalService
+    ModalService,
+    DBLettersService,
+    StorageService
   ],
   bootstrap: [AppComponent]
 })

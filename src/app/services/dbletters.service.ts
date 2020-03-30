@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFireDatabase, AngularFireList, AngularFireAction, DatabaseSnapshot } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 export enum LetterStatus {
   withoutStatus = 'withoutStatus',
@@ -221,90 +223,55 @@ export interface Letter { // please change this names and change these in form
   /*
   необходимо дописать случаи невозрвата (сроки хранения ожидается что они будут на сервере)
   */
+
+  history: string;
+}
+
+export interface LetterHistory {
+  wasStatus: string;
+  updatedStatus: string;
+  dateOfUpdate: string;
+  uid: string;
+  officeName: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class DBLettersService {
-  // private letters: Letter[];
+  constructor(private httpClient: HttpClient) { }
 
-  private lettersRef: AngularFireList<Letter>;
+  updateStatusLetter(id: number, status: LetterStatus) {
+    const letterHistory: LetterHistory = {
+      wasStatus: '',
+      updatedStatus: status,
+      dateOfUpdate: `${(new Date()).getTime()}`,
+      uid: '3214USER3',
+      officeName: ''
+    };
 
-  constructor(private db: AngularFireDatabase) {
-    this.lettersRef = this.db.list('letters');
+    switch (status) {
+      case LetterStatus.withoutStatus:
+        letterHistory.officeName = 'Вручено';
+        break;
+      case LetterStatus.onStartPostOffice:
+        letterHistory.officeName = 'Принято почтовое отправление в (220042) Минск - 42';
+        break;
+      case LetterStatus.inProgress:
+        letterHistory.officeName = 'Принято в (200400) из (220042) Минск - 42';
+        break;
+      case LetterStatus.onPromejutochniyPostOffice:
+        letterHistory.officeName = 'Передано в участок обработки почты (200010) Минск';
+        break;
+      case LetterStatus.onEndPostOffice:
+        letterHistory.officeName = 'Готово к выдаче (200234)';
+        break;
+    }
+
+    return this.httpClient.put<Letter>(
+      `${environment.url}/api/updateStatusLetter.php`,
+      { id, status, letterHistory: JSON.stringify(letterHistory) }
+    );
   }
 
-  getLetters(): Observable<Letter[]> {
-    return this.lettersRef
-      .valueChanges()
-      .pipe(
-        take(1),
-        map(letters => letters || [])
-      );
-  }
-
-  pushLetter(letter: Letter) {
-    return this.lettersRef
-      .push(letter);
-  }
-
-  protected modifyListItem(hash: string, convertUser: (letter: Letter) => Letter): Observable<boolean>  { // refactor that please
-    return new Observable((obs) => {
-      // console.log(this.list);
-      if (!this.lettersRef) {
-        obs.next(false);
-        return;
-      }
-
-      let listItem: Letter;
-      this.getLetters()
-        .subscribe(letters => {
-          listItem = letters ? letters.find((item: Letter) => item.hash === hash) : null;
-        });
-
-      if (!listItem) {
-        obs.next(false);
-        return;
-      }
-
-      this.findUserKey(hash)
-        .subscribe(keyAndUser => {
-          const updatedItem = convertUser(listItem);
-
-          this.lettersRef
-            .update(keyAndUser.key, updatedItem)
-            .then(
-              (res) => {
-                console.log(res);
-                obs.next(true);
-                return;
-              },
-              (error) => {
-                console.log(error);
-                obs.next(false);
-                return;
-              }
-            );
-        });
-    });
-  }
-
-  protected findUserKey(id: string): Observable<{ key: string, listItem: Letter }> {
-    return this.lettersRef.snapshotChanges()
-      .pipe(
-        take(1),
-        map((changes: AngularFireAction<DatabaseSnapshot<Letter>>[]) => {
-          const result = changes.find(change => (change.payload.val() as any).id === id); // refactor that
-          const listItem: Letter = result ? result.payload.val() : null;
-
-          return {
-            key: result ? result.key : '',
-            listItem
-          };
-        })
-      );
-  }
-
-  // deleteLetter // may not need?
 }

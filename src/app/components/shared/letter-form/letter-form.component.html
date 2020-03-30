@@ -5,28 +5,135 @@
   </div>
   <!-- receiverAddress -->
   <div class="row">
-    <p>Адрес получателя</p>
+    <h3>Адрес получателя</h3>
     <label for="komu">ФИО Получателя</label>
-    <input type="text" name="komu" id="komu">
-    <label for="kuda">Адрес получателя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
-    <input type="text" name="kuda" id="kuda">
+    <input type="text" name="komu" id="komu" [(ngModel)]="letter.receiverAddress.komu.name">
+<!-- TODO!!!!! -->
+    <div class="row-sub">
+      <!-- <label for="kuda">Адрес получателя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
+      <input type="text" name="kuda" id="kuda"> -->
+
+      <div class="input-row">
+        <label for="streetType">Тип (улица, проспеки и т.д.)</label>
+        <input type="text" name="streetType" id="streetType" [(ngModel)]="letter.receiverAddress.kuda.streetType">
+      </div>
+
+      <div class="input-row">
+        <label for="streetName">Название улицы</label>
+        <input type="text" name="streetName" id="streetName" [(ngModel)]="letter.receiverAddress.kuda.streetName">
+      </div>
+
+      <div class="input-row">
+        <label for="numberOfHouse">Номер дома</label>
+        <input type="text" name="numberOfHouse" id="numberOfHouse" [(ngModel)]="letter.receiverAddress.kuda.numberOfHouse">
+      </div>
+
+      <div class="input-row">
+        <label for="numberOfKorpus">Номер корпуса</label>
+        <input type="text" name="numberOfKorpus" id="numberOfKorpus" [(ngModel)]="letter.receiverAddress.kuda.numberOfKorpus">
+      </div>
+
+      <div class="input-row">
+        <label for="numberOfFlat">Номер квартиры</label>
+        <input type="text" name="numberOfFlat" id="numberOfFlat" [(ngModel)]="letter.receiverAddress.kuda.numberOfFlat">
+      </div>
+    </div>
+
     <label for="index">Индекс</label>
-    <input type="text" name="index" id="index">
-    <label for="nasPunktName">Название населенного пункта (обасть, район, город)</label>
-    <input type="text" name="nasPunktName" id="nasPunktName">
+    <input type="text" name="index" id="index" [(ngModel)]="letter.receiverAddress.index">
+
+    <div class="row-sub">
+      <h4>Название населенного пункта</h4>
+      <div class="input-row">
+        <label for="oblast">Обасть</label>
+        <input type="text" name="oblast" id="oblast" [(ngModel)]="letter.receiverAddress.nasPunktName.oblast">
+      </div>
+
+      <div class="input-row">
+        <label for="region">Район</label>
+        <input type="text" name="region" id="region" [(ngModel)]="letter.receiverAddress.nasPunktName.region">
+      </div>
+
+      <div class="input-row">
+        <label for="typeOfTown">Тип</label>
+        <input type="text" name="typeOfTown" id="typeOfTown" [(ngModel)]="letter.receiverAddress.nasPunktName.typeOfTown">
+      </div>
+
+      <div class="input-row">
+        <label for="townName">Название нас. пункта</label>
+        <input type="text" name="townName" id="townName" [(ngModel)]="letter.receiverAddress.nasPunktName.townName">
+      </div>
+    </div>
+
+    <!-- <label for="nasPunktName">Название населенного пункта (обасть, район, город)</label>
+    <input type="text" name="nasPunktName" id="nasPunktName"> -->
   </div>
   <div class="row">
-    <p>Адрес отправителя</p>
-    <label for="otKogo">От кого</label>
-    <input type="text" name="otKogo" id="otKogo">
+    <h3>Адрес отправителя</h3>
+    <label for="otKogo">ФИО Отправителя</label>
+    <input type="text" name="otKogo" id="otKogo" [(ngModel)]="letter.otpravitelAddress.otKogo.name">
+    <!-- TODO!!!! -->
 
-    <label for="adressOtKogo">Адрес отправителя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
-    <input type="text" name="adressOtKogo" id="adressOtKogo">
-    <label for="otKogoNasPunktName">Название населенного пункта (обасть, район, город)</label>
-    <input type="text" name="otKogoNasPunktName" id="otKogoNasPunktName">
+    <!-- <label for="adressOtKogo">Адрес отправителя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
+    <input type="text" name="adressOtKogo" id="adressOtKogo"> -->
+
+    <div class="row-sub">
+      <!-- <label for="kuda">Адрес получателя (улица, номер квартиры, номер корпуса, номер квартиры)</label>
+      <input type="text" name="kuda" id="kuda"> -->
+
+      <div class="input-row">
+        <label for="streetType">Тип (улица, проспеки и т.д.)</label>
+        <input type="text" name="streetType" id="streetType" [(ngModel)]="letter.otpravitelAddress.adress.streetType">
+      </div>
+
+      <div class="input-row">
+        <label for="streetName">Название улицы</label>
+        <input type="text" name="streetName" id="streetName" [(ngModel)]="letter.otpravitelAddress.adress.streetName">
+      </div>
+
+      <div class="input-row">
+        <label for="numberOfHouse">Номер дома</label>
+        <input type="text" name="numberOfHouse" id="numberOfHouse" [(ngModel)]="letter.otpravitelAddress.adress.numberOfHouse">
+      </div>
+
+      <div class="input-row">
+        <label for="numberOfKorpus">Номер корпуса</label>
+        <input type="text" name="numberOfKorpus" id="numberOfKorpus" [(ngModel)]="letter.otpravitelAddress.adress.numberOfKorpus">
+      </div>
+
+      <div class="input-row">
+        <label for="numberOfFlat">Номер квартиры</label>
+        <input type="text" name="numberOfFlat" id="numberOfFlat" [(ngModel)]="letter.otpravitelAddress.adress.numberOfHouse">
+      </div>
+    </div>
+
+    <div class="row-sub">
+      <h4>Название населенного пункта</h4>
+      <div class="input-row">
+        <label for="oblast">Обасть</label>
+        <input type="text" name="oblast" id="oblast" [(ngModel)]="letter.otpravitelAddress.adress.oblast">
+      </div>
+
+      <div class="input-row">
+        <label for="region">Район</label>
+        <input type="text" name="region" id="region" [(ngModel)]="letter.otpravitelAddress.adress.region">
+      </div>
+
+      <div class="input-row">
+        <label for="typeOfTown">Тип</label>
+        <input type="text" name="typeOfTown" id="typeOfTown" [(ngModel)]="letter.otpravitelAddress.adress.typeOfTown">
+      </div>
+
+      <div class="input-row">
+        <label for="townName">Название нас. пункта</label>
+        <input type="text" name="townName" id="townName" [(ngModel)]="letter.otpravitelAddress.adress.townName">
+      </div>
+    </div>
+
   </div>
 
   <div class="row">
+    <!-- <button (click)="sendLetter()">Отправить</button> -->
     <!-- <select name="typeOfLetter" id="typeOfLetter" [(ng)]></select> -->
   </div>
 </div>
